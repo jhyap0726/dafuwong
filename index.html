@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flex City 大富翁</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #121212; color: #fff; display: flex; height: 100vh; overflow: hidden; }
+        #game-container { display: flex; width: 100%; height: 100%; }
+        #board-wrapper { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        canvas { background-color: #1e1e24; border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+        #ui-panel { width: 320px; background-color: #18181c; padding: 20px; display: flex; flex-direction: column; gap: 15px; border-left: 1px solid #333; }
+        .card { background: #23232a; padding: 15px; border-radius: 8px; border: 1px solid #333; }
+        h2 { font-size: 1.2rem; margin-bottom: 10px; color: #4e9f3d; }
+        .stat-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.95rem; }
+        .val { font-weight: bold; color: #ffbd59; }
+        button { background: linear-gradient(135deg, #1db954, #1aa34a); color: white; border: none; padding: 12px; font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; }
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+        button:disabled { background: #444; cursor: not-allowed; transform: none; }
+        #log-box { flex: 1; background: #0d0d0f; border-radius: 6px; padding: 10px; font-size: 0.85rem; overflow-y: auto; color: #aaa; border: 1px solid #222; }
+        .log-entry { margin-bottom: 6px; border-bottom: 1px solid #1a1a1a; padding-bottom: 4px; }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <div id="board-wrapper">
+        <canvas id="board" width="600" height="600"></canvas>
+    </div>
+    <div id="ui-panel">
+        <div class="card">
+            <h2>玩家资产</h2>
+            <div class="stat-row"><span>现金:</span><span class="val" id="money">$1500</span></div>
+            <div class="stat-row"><span>当前位置:</span><span class="val" id="location">起点</span></div>
+        </div>
+
+        <button id="roll-btn" onclick="playTurn()">掷骰子</button>
+
+        <div class="card" style="flex: 1; display: flex; flex-direction: column;">
+            <h2>动态日志</h2>
+            <div id="log-box"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 地图定义（现实城市建筑风格）
+    const tiles = [
+        { name: "起点 (领取薪水)", type: "start", color: "#4e9f3d" },
+        { name: "便利店", type: "property", price: 100, rent: 20, owner: null, color: "#4d96ff" },
+        { name: "现实事件", type: "event", color: "#ff6b6b" },
+        { name: "咖啡馆", type: "property", price: 150, rent: 35, owner: null, color: "#4d96ff" },
+        { name: "地铁站", type: "property", price: 200, rent: 50, owner: null, color: "#ffbd59" },
+        { name: "科技园区", type: "property", price: 250, rent: 65, owner: null, color: "#6bcb77" },
+        { name: "缴税中心", type: "tax", amount: 100, color: "#ff4d4d" },
+        { name: "健身房", type: "property", price: 180, rent: 40, owner: null, color: "#6bcb77" },
+        { name: "CBD大楼", type: "property", price: 350, rent: 100, owner: null, color: "#9b51e0" },
+        { name: "豪华酒店", type: "property", price: 400, rent: 130, owner: null, color: "#9b51e0" },
+        { name: "股票中心", type: "event", color: "#ff6b6b" },
+        { name: "海滨公寓", type: "property", price: 300, rent: 80, owner: null, color: "#ffbd59" }
+    ];
+
+    const player = { pos: 0, money: 1500 };
+    const boardSize = 600;
+    const tileSize = 100;
+    const canvas = document.getElementById('board');
+    const ctx = canvas.getContext('2d');
+
+    // 计算环形地图坐标
+    function getTileCoords(index) {
+        if (index < 4) return { x: index * tileSize, y: 0 };
+        if (index < 7) return { x: 3 * tileSize, y: (index - 3) * tileSize };
+        if (index < 10) return { x: (9 - index) * tileSize, y: 3 * tileSize };
+        return { x: 0, y: (12 - index) * tileSize };
+    }
+
+    function drawBoard() {
+        ctx.clearRect(0, 0, boardSize, boardSize);
+
+        // 绘制格子
+        tiles.forEach((tile, i) => {
+            const { x, y } = getTileCoords(i);
+            ctx.fillStyle = "#282830";
+            ctx.fillRect(x, y, tileSize, tileSize);
+            ctx.strokeStyle = "#3e3e4a";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(x, y, tileSize, tileSize);
+
+            // 顶部颜色条
+            ctx.fillStyle = tile.color;
+            ctx.fillRect(x, y, tileSize, 12);
+
+            // 文字
+            ctx.fillStyle = "#fff";
+            ctx.font = "12px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(tile.name, x + tileSize / 2, y + 35);
+
+            if (tile.price) {
+                ctx.fillStyle = tile.owner ? "#ffbd59" : "#aaa";
+                const ownerText = tile.owner ? "已购买" : `$${tile.price}`;
+                ctx.fillText(ownerText, x + tileSize / 2, y + 55);
+            }
+        });
+
+        // 绘制玩家
+        const pCoords = getTileCoords(player.pos);
+        ctx.beginPath();
+        ctx.arc(pCoords.x + tileSize / 2, pCoords.y + tileSize / 2 + 15, 12, 0, Math.PI * 2);
+        ctx.fillStyle = "#00f2fe";
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = "#ffffff";
+        ctx.stroke();
+    }
+
+    function log(msg) {
+        const box = document.getElementById('log-box');
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        entry.innerText = msg;
+        box.prepend(entry);
+    }
+
+    function updateUI() {
+        document.getElementById('money').innerText = `$${player.money}`;
+        document.getElementById('location').innerText = tiles[player.pos].name;
+        drawBoard();
+    }
+
+    function playTurn() {
+        const btn = document.getElementById('roll-btn');
+        btn.disabled = true;
+
+        const dice = Math.floor(Math.random() * 6) + 1;
+        log(`🎲 你掷出了 ${dice} 点！`);
+
+        let steps = 0;
+        const interval = setInterval(() => {
+            player.pos = (player.pos + 1) % tiles.length;
+            if (player.pos === 0) {
+                player.money += 200;
+                log("💰 经过起点，获得薪水 $200");
+            }
+            steps++;
+            updateUI();
+
+            if (steps === dice) {
+                clearInterval(interval);
+                handleTileAction();
+                btn.disabled = false;
+            }
+        }, 200);
+    }
+
+    function handleTileAction() {
+        const currentTile = tiles[player.pos];
+
+        if (currentTile.type === "property") {
+            if (!currentTile.owner) {
+                if (player.money >= currentTile.price) {
+                    if (confirm(`是否购买 ${currentTile.name}（价格: $${currentTile.price}）？`)) {
+                        player.money -= currentTile.price;
+                        currentTile.owner = "player";
+                        log(`🏠 你购买了 ${currentTile.name}`);
+                    }
+                } else {
+                    log(`🏬 资金不足，无法购买 ${currentTile.name}`);
+                }
+            } else if (currentTile.owner === "player") {
+                log(`🏢 欢迎回到你的地产: ${currentTile.name}`);
+            }
+        } else if (currentTile.type === "tax") {
+            player.money -= currentTile.amount;
+            log(`💸 支付税费 $${currentTile.amount}`);
+        } else if (currentTile.type === "event") {
+            const randomEvent = Math.random() > 0.5;
+            if (randomEvent) {
+                player.money += 100;
+                log("📈 投资理财获利 $100");
+            } else {
+                player.money -= 50;
+                log("📉 遇到消费陷阱，损失 $50");
+            }
+        }
+        updateUI();
+    }
+
+    // 初始化渲染
+    updateUI();
+</script>
+</body>
+</html>
