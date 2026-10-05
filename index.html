@@ -3,43 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flex City - 阶层跨越</title>
+    <title>Flex City - 巨型城市阶层跨越</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: #121212; color: #fff; display: flex; height: 100vh; overflow: hidden; }
+        body { background-color: #0f0f13; color: #fff; display: flex; height: 100vh; overflow: hidden; }
         #game-container { display: flex; width: 100%; height: 100%; }
-        #board-wrapper { flex: 1; display: flex; justify-content: center; align-items: center; padding: 20px; }
-        canvas { background-color: #1a1a20; border-radius: 8px; box-shadow: 0 8px 32px rgba(0,0,0,0.6); }
-        #ui-panel { width: 340px; background-color: #18181c; padding: 20px; display: flex; flex-direction: column; gap: 15px; border-left: 1px solid #333; }
-        .card { background: #23232a; padding: 12px; border-radius: 8px; border: 1px solid #333; }
-        h2 { font-size: 1.1rem; margin-bottom: 8px; color: #4e9f3d; }
-        .player-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid #2a2a32; font-size: 0.85rem; }
-        .player-tag { font-weight: bold; padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; }
-        .tier-poor { background-color: #555; color: #fff; }
-        .tier-rich { background-color: #ffd700; color: #000; }
-        button { background: linear-gradient(135deg, #1db954, #1aa34a); color: white; border: none; padding: 12px; font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; }
-        button:hover { opacity: 0.9; }
-        button:disabled { background: #444; cursor: not-allowed; }
-        #log-box { flex: 1; background: #0d0d0f; border-radius: 6px; padding: 10px; font-size: 0.8rem; overflow-y: auto; color: #aaa; border: 1px solid #222; }
-        .log-entry { margin-bottom: 6px; border-bottom: 1px solid #1a1a1a; padding-bottom: 4px; }
+        #board-wrapper { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; background: #08080a; }
+        canvas { background-color: #16161c; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
+        #ui-panel { width: 380px; background-color: #141418; padding: 20px; display: flex; flex-direction: column; gap: 12px; border-left: 1px solid #2d2d38; }
+        .card { background: #1c1c24; padding: 12px; border-radius: 8px; border: 1px solid #2d2d38; }
+        h2 { font-size: 1rem; margin-bottom: 6px; color: #4e9f3d; display: flex; justify-content: space-between; align-items: center; }
+        .player-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #262632; font-size: 0.82rem; }
+        .player-tag { font-weight: bold; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; }
+        .tier-poor { background-color: #444; color: #ddd; }
+        .tier-rich { background-color: #ffd700; color: #000; font-weight: bold; }
+        .guide-box { font-size: 0.78rem; line-height: 1.45; color: #bbb; background: #121217; padding: 10px; border-radius: 6px; border-left: 3px solid #ffd700; }
+        .guide-box ul { padding-left: 15px; margin-top: 4px; }
+        .guide-box li { margin-bottom: 3px; }
+        button { background: linear-gradient(135deg, #1db954, #1aa34a); color: white; border: none; padding: 12px; font-size: 1rem; font-weight: bold; border-radius: 6px; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 12px rgba(29,185,84,0.3); }
+        button:hover { opacity: 0.9; transform: translateY(-1px); }
+        button:disabled { background: #333; color: #777; cursor: not-allowed; transform: none; box-shadow: none; }
+        #log-box { flex: 1; background: #0a0a0d; border-radius: 6px; padding: 8px; font-size: 0.78rem; overflow-y: auto; color: #aaa; border: 1px solid #222; max-height: 180px; }
+        .log-entry { margin-bottom: 4px; border-bottom: 1px solid #16161a; padding-bottom: 3px; }
     </style>
 </head>
 <body>
 
 <div id="game-container">
     <div id="board-wrapper">
-        <canvas id="board" width="650" height="650"></canvas>
+        <canvas id="board" width="750" height="750"></canvas>
     </div>
     <div id="ui-panel">
+        <!-- 跨越指南 -->
         <div class="card">
-            <h2>玩家状态 (4人竞技)</h2>
+            <h2>💡 如何从“平民”成为“富人”？</h2>
+            <div class="guide-box">
+                在 Flex City 中，你可以通过以下策略完成财富跃升：
+                <ul>
+                    <li><b>积累原始资本</b>：在平民圈购买低价属性（如快递站/大排档），收取其他玩家过路费。</li>
+                    <li><b>抓住跃升节点</b>：平民圈有两个<b>【风投/跃升机会】</b>，当资金到达 <b>$600</b> 时即可跨越进入富人圈！</li>
+                    <li><b>富人圈滚雪球</b>：富人圈地产收益是平民圈的 <b>5-10倍</b>，优先购买顶级资产（高尔夫/豪宅）。</li>
+                    <li><b>规避防爆陷阱</b>：时刻留存备用金，避免在富人圈踩到<b>【破产/贬值】</b>导致打回原形。</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 玩家面板 -->
+        <div class="card">
+            <h2>👥 4人竞技状态</h2>
             <div id="players-status"></div>
         </div>
 
         <button id="roll-btn" onclick="playTurn()">🎲 掷骰子 (你的回合)</button>
 
+        <!-- 游戏日志 -->
         <div class="card" style="flex: 1; display: flex; flex-direction: column;">
-            <h2>动态日志</h2>
+            <h2>📜 城市动态</h2>
             <div id="log-box"></div>
         </div>
     </div>
@@ -48,106 +67,114 @@
 <script>
     // 4位玩家定义
     const players = [
-        { id: 0, name: "你 (P1)", color: "#00f2fe", money: 1000, tier: "poor", pos: 0, isAI: false },
-        { id: 1, name: "电脑 P2", color: "#ff4757", money: 1000, tier: "poor", pos: 0, isAI: true },
-        { id: 2, name: "电脑 P3", color: "#2ed573", money: 1000, tier: "poor", pos: 0, isAI: true },
-        { id: 3, name: "电脑 P4", color: "#ffa502", money: 1000, tier: "poor", pos: 0, isAI: true }
+        { id: 0, name: "你 (P1)", color: "#00f2fe", money: 800, tier: "poor", pos: 0, isAI: false },
+        { id: 1, name: "电脑 P2", color: "#ff4757", money: 800, tier: "poor", pos: 0, isAI: true },
+        { id: 2, name: "电脑 P3", color: "#2ed573", money: 800, tier: "poor", pos: 0, isAI: true },
+        { id: 3, name: "电脑 P4", color: "#ffa502", money: 800, tier: "poor", pos: 0, isAI: true }
     ];
 
-    let currentTurn = 0; // 当前轮到的玩家索引
+    let currentTurn = 0;
 
-    // 平民圈（内圈 8个格子）
+    // 内圈：平民圈 (10个格子)
     const poorTiles = [
-        { name: "平民起点", type: "start", rent: 0, color: "#70a1ff" },
-        { name: "打工人快递站", type: "property", price: 100, rent: 30, owner: null, color: "#a4b0be" },
-        { name: "城中村出租屋", type: "property", price: 120, rent: 40, owner: null, color: "#a4b0be" },
-        { name: "创业风投(跳板)", type: "jump", color: "#ff6b81" }, // 进入富人圈的机会
-        { name: "便民超市", type: "property", price: 150, rent: 50, owner: null, color: "#a4b0be" },
-        { name: "深夜大排档", type: "property", price: 180, rent: 60, owner: null, color: "#a4b0be" },
-        { name: "意外开销", type: "tax", amount: 100, color: "#ff4757" },
-        { name: "二手车行", type: "property", price: 200, rent: 70, owner: null, color: "#a4b0be" }
+        { name: "平民起点", type: "start", color: "#70a1ff" },
+        { name: "快递驿站", type: "property", price: 80, rent: 25, owner: null, color: "#888899" },
+        { name: "城中村公寓", type: "property", price: 100, rent: 35, owner: null, color: "#888899" },
+        { name: "天使风投(跃升)", type: "jump", color: "#2ed573" },
+        { name: "便民超市", type: "property", price: 120, rent: 45, owner: null, color: "#888899" },
+        { name: "深夜大排档", type: "property", price: 150, rent: 55, owner: null, color: "#888899" },
+        { name: "意外账单", type: "tax", amount: 80, color: "#ff4757" },
+        { name: "二手车行", type: "property", price: 180, rent: 65, owner: null, color: "#888899" },
+        { name: "知识付费(跃升)", type: "jump", color: "#2ed573" },
+        { name: "网红奶茶店", type: "property", price: 200, rent: 75, owner: null, color: "#888899" }
     ];
 
-    // 富人圈（外圈 12个格子）
+    // 外圈：富人圈 (18个格子)
     const richTiles = [
-        { name: "富豪起点", type: "start", color: "#ffa502" },
-        { name: "CBD摩天大楼", type: "property", price: 500, rent: 200, owner: null, color: "#eccc68" },
-        { name: "高级私人诊所", type: "property", price: 600, rent: 250, owner: null, color: "#eccc68" },
-        { name: "现实风险事件", type: "event", color: "#ff6b81" },
-        { name: "豪华游艇俱乐部", type: "property", price: 800, rent: 350, owner: null, color: "#eccc68" },
+        { name: "富豪起点", type: "start", color: "#ffd700" },
+        { name: "CBD摩天楼", type: "property", price: 500, rent: 200, owner: null, color: "#eccc68" },
+        { name: "私人诊所", type: "property", price: 600, rent: 250, owner: null, color: "#eccc68" },
+        { name: "资本博弈", type: "event", color: "#ff6b81" },
+        { name: "游艇俱乐部", type: "property", price: 800, rent: 350, owner: null, color: "#eccc68" },
         { name: "科技独角兽", type: "property", price: 1000, rent: 450, owner: null, color: "#eccc68" },
         { name: "奢品旗舰店", type: "property", price: 1200, rent: 550, owner: null, color: "#eccc68" },
-        { name: "破产风波(回平民)", type: "downgrade", color: "#ff4757" }, // 被贬回平民圈
-        { name: "半山豪宅区", type: "property", price: 1500, rent: 700, owner: null, color: "#eccc68" },
-        { name: "私立贵族学校", type: "property", price: 1800, rent: 850, owner: null, color: "#eccc68" },
-        { name: "资本避税天堂", type: "event", color: "#2ed573" },
-        { name: "私人高尔夫球场", type: "property", price: 2000, rent: 1000, owner: null, color: "#eccc68" }
+        { name: "金融风险(贬值)", type: "downgrade", color: "#ff4757" },
+        { name: "半山豪宅", type: "property", price: 1500, rent: 700, owner: null, color: "#eccc68" },
+        { name: "贵族学校", type: "property", price: 1800, rent: 850, owner: null, color: "#eccc68" },
+        { name: "高尔夫球场", type: "property", price: 2200, rent: 1000, owner: null, color: "#eccc68" },
+        { name: "资本避税", type: "event", color: "#2ed573" },
+        { name: "私人影院", type: "property", price: 2500, rent: 1200, owner: null, color: "#eccc68" },
+        { name: "米其林餐厅", type: "property", price: 2800, rent: 1400, owner: null, color: "#eccc68" },
+        { name: "破产风波(贬值)", type: "downgrade", color: "#ff4757" },
+        { name: "私人机场", type: "property", price: 3200, rent: 1600, owner: null, color: "#eccc68" },
+        { name: "海岛度假村", type: "property", price: 3800, rent: 2000, owner: null, color: "#eccc68" },
+        { name: "顶级财团", type: "property", price: 4500, rent: 2500, owner: null, color: "#eccc68" }
     ];
 
     const canvas = document.getElementById('board');
     const ctx = canvas.getContext('2d');
 
-    // 计算坐标：内圈与外圈双层几何计算
+    // 计算超级地图几何坐标 (大尺寸画布)
     function getTileCoords(tier, index) {
         if (tier === "poor") {
-            // 内圈 8个格 (2x2 缩进)
-            const margin = 165;
-            const size = 80;
+            // 内圈 10个格 (矩形排列)
+            const margin = 210;
+            const size = 110;
             const pos = [
-                {x: margin, y: margin}, {x: margin + size*2, y: margin}, 
-                {x: margin + size*4, y: margin}, {x: margin + size*4, y: margin + size*2},
-                {x: margin + size*4, y: margin + size*4}, {x: margin + size*2, y: margin + size*4},
-                {x: margin, y: margin + size*4}, {x: margin, y: margin + size*2}
+                {x: margin, y: margin}, {x: margin + size, y: margin}, {x: margin + size*2, y: margin},
+                {x: margin + size*3, y: margin}, {x: margin + size*3, y: margin + size*1.5},
+                {x: margin + size*3, y: margin + size*3}, {x: margin + size*2, y: margin + size*3},
+                {x: margin + size, y: margin + size*3}, {x: margin, y: margin + size*3},
+                {x: margin, y: margin + size*1.5}
             ];
-            return pos[index % 8];
+            return pos[index % 10];
         } else {
-            // 外圈 12个格
-            const tileSize = 90;
-            if (index < 4) return { x: index * 180, y: 0 };
-            if (index < 7) return { x: 540, y: (index - 3) * 180 };
-            if (index < 10) return { x: (9 - index) * 180, y: 540 };
-            return { x: 0, y: (12 - index) * 180 };
+            // 外圈 18个格 (超大外围)
+            const tileSize = 120;
+            if (index < 5) return { x: index * 150, y: 0 };
+            if (index < 9) return { x: 630, y: (index - 4) * 150 };
+            if (index < 14) return { x: (13 - index) * 150, y: 630 };
+            return { x: 0, y: (18 - index) * 150 };
         }
     }
 
     function drawBoard() {
-        ctx.clearRect(0, 0, 650, 650);
+        ctx.clearRect(0, 0, 750, 750);
 
         // 绘制外圈 (富人圈)
         richTiles.forEach((tile, i) => {
             const { x, y } = getTileCoords("rich", i);
-            drawTile(x, y, 110, 110, tile, "富人");
+            drawTile(x, y, 120, 120, tile, "富人");
         });
 
         // 绘制内圈 (平民圈)
         poorTiles.forEach((tile, i) => {
             const { x, y } = getTileCoords("poor", i);
-            drawTile(x, y, 80, 80, tile, "平民");
+            drawTile(x, y, 95, 95, tile, "平民");
         });
 
-        // 绘制所有玩家
+        // 绘制玩家标记
         players.forEach((p, idx) => {
             const coords = getTileCoords(p.tier, p.pos);
-            const tileSize = p.tier === "rich" ? 110 : 80;
+            const tileSize = p.tier === "rich" ? 120 : 95;
             
-            // 错开多名玩家位置，避免重叠
-            const offsetX = (idx % 2) * 20 - 10;
-            const offsetY = Math.floor(idx / 2) * 20 - 10;
+            const offsetX = (idx % 2) * 22 - 11;
+            const offsetY = Math.floor(idx / 2) * 22 - 11;
 
             ctx.beginPath();
-            ctx.arc(coords.x + tileSize / 2 + offsetX, coords.y + tileSize / 2 + offsetY, 10, 0, Math.PI * 2);
+            ctx.arc(coords.x + tileSize / 2 + offsetX, coords.y + tileSize / 2 + offsetY, 11, 0, Math.PI * 2);
             ctx.fillStyle = p.color;
             ctx.fill();
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 2.5;
             ctx.strokeStyle = "#ffffff";
             ctx.stroke();
         });
     }
 
     function drawTile(x, y, w, h, tile, layerName) {
-        ctx.fillStyle = "#22222a";
+        ctx.fillStyle = "#1e1e26";
         ctx.fillRect(x, y, w, h);
-        ctx.strokeStyle = "#383842";
+        ctx.strokeStyle = layerName === "富人" ? "#3a3a4c" : "#2d2d3a";
         ctx.lineWidth = 2;
         ctx.strokeRect(x, y, w, h);
 
@@ -155,14 +182,14 @@
         ctx.fillRect(x, y, w, 8);
 
         ctx.fillStyle = "#fff";
-        ctx.font = "10px sans-serif";
+        ctx.font = "11px sans-serif";
         ctx.textAlign = "center";
-        ctx.fillText(tile.name, x + w / 2, y + 28);
+        ctx.fillText(tile.name, x + w / 2, y + 30);
 
         if (tile.price) {
             ctx.fillStyle = tile.owner !== null ? players[tile.owner].color : "#888";
-            const ownerText = tile.owner !== null ? `P${tile.owner+1}资产` : `$${tile.price}`;
-            ctx.fillText(ownerText, x + w / 2, y + 48);
+            const ownerText = tile.owner !== null ? `P${tile.owner+1}持有` : `$${tile.price}`;
+            ctx.fillText(ownerText, x + w / 2, y + 52);
         }
     }
 
@@ -178,10 +205,10 @@
         const container = document.getElementById('players-status');
         container.innerHTML = "";
         
-        players.forEach((p, i) => {
+        players.forEach((p) => {
             const row = document.createElement('div');
             row.className = 'player-row';
-            const tierName = p.tier === "rich" ? "富人圈" : "平民圈";
+            const tierName = p.tier === "rich" ? "💎富人圈" : "🧢平民圈";
             const tierClass = p.tier === "rich" ? "tier-rich" : "tier-poor";
             
             row.innerHTML = `
@@ -204,90 +231,87 @@
     function playTurn() {
         const p = players[currentTurn];
         const dice = Math.floor(Math.random() * 6) + 1;
-        log(`🎲 <b style="color:${p.color}">${p.name}</b> 掷出了 ${dice} 点！`);
+        log(`🎲 <b style="color:${p.color}">${p.name}</b> 掷出了 ${dice} 点`);
 
         const map = p.tier === "rich" ? richTiles : poorTiles;
         p.pos = (p.pos + dice) % map.length;
 
-        // 起点结算
+        // 起点发放工资
         if (p.pos < dice) {
-            const salary = p.tier === "rich" ? 1000 : 300;
+            const salary = p.tier === "rich" ? 1200 : 350;
             p.money += salary;
-            log(`💰 ${p.name} 经过起点，获得补贴 $${salary}`);
+            log(`💰 ${p.name} 经过起点，发放低保/红利 $${salary}`);
         }
 
         handleTileAction(p, map[p.pos]);
         updateUI();
 
-        // 切换下一位玩家
+        // 轮换玩家
         currentTurn = (currentTurn + 1) % players.length;
         updateUI();
 
-        // 如果轮到 AI，自动进行回合
         if (players[currentTurn].isAI) {
-            setTimeout(playTurn, 1200);
+            setTimeout(playTurn, 1000);
         }
     }
 
     function handleTileAction(p, tile) {
-        log(`📍 ${p.name} 停在了 <b>${tile.name}</b>`);
+        log(`📍 ${p.name} 停在 <b>${tile.name}</b>`);
 
-        // 1. 跃升/降级机制
+        // 1. 阶层跃升机制
         if (tile.type === "jump" && p.tier === "poor") {
-            if (p.money >= 500) {
+            if (p.money >= 600) {
                 p.tier = "rich";
                 p.pos = 0;
-                p.money -= 200;
-                log(`🚀 恭喜！<b>${p.name}</b> 投资成功，成功<b>跨越阶层进入【富人圈】</b>！`);
+                p.money -= 300;
+                log(`🚀 💥 <b>${p.name} 抓住风投/跃升节点，成功跨越到【富人圈】！</b>`);
             } else {
-                log(`⚠️ ${p.name} 资金不足 $500，错失跃升机会。`);
+                log(`⚠️ ${p.name} 资金不足 $600（需缴纳$300入门费），无法跨越阶层。`);
             }
             return;
         }
 
+        // 2. 阶层跌落机制
         if (tile.type === "downgrade" && p.tier === "rich") {
             p.tier = "poor";
             p.pos = 0;
-            log(`📉 惨！<b>${p.name}</b> 遭遇破产危机，被<b>贬回【平民圈】</b>！`);
+            log(`📉 😭 <b>${p.name} 遭遇黑天鹅破产事件，不幸被【贬回平民圈】！</b>`);
             return;
         }
 
-        // 2. 地产交易与过路费
+        // 3. 买地与过路费
         if (tile.type === "property") {
             if (tile.owner === null) {
-                // 买地决策
                 if (p.money >= tile.price) {
                     if (!p.isAI) {
                         if (confirm(`是否花费 $${tile.price} 购买 ${tile.name}？`)) {
                             p.money -= tile.price;
                             tile.owner = p.id;
-                            log(`🏠 ${p.name} 购买了 ${tile.name}`);
+                            log(`🏠 ${p.name} 成功收购 ${tile.name}`);
                         }
                     } else {
-                        // AI 自动买地策略
                         p.money -= tile.price;
                         tile.owner = p.id;
-                        log(`🏠 ${p.name}(AI) 购买了 ${tile.name}`);
+                        log(`🏠 ${p.name}(AI) 收购了 ${tile.name}`);
                     }
                 }
             } else if (tile.owner !== p.id) {
-                // 支付过路费
                 const owner = players[tile.owner];
                 p.money -= tile.rent;
                 owner.money += tile.rent;
-                log(`💸 ${p.name} 向 ${owner.name} 支付了过路费 $${tile.rent}`);
+                log(`💸 ${p.name} 向 ${owner.name} 支付过路费 $${tile.rent}`);
             }
         } else if (tile.type === "tax") {
             p.money -= tile.amount;
-            log(`💸 ${p.name} 缴纳了 $${tile.amount}`);
+            log(`💸 ${p.name} 支付额外账单 $${tile.amount}`);
         } else if (tile.type === "event") {
-            const reward = Math.random() > 0.5 ? 200 : -100;
+            const reward = Math.random() > 0.4 ? 300 : -200;
             p.money += reward;
-            log(reward > 0 ? `📈 ${p.name} 获得投资红利 $${reward}` : `📉 ${p.name} 遭遇金融风暴损失 $${Math.abs(reward)}`);
+            log(reward > 0 ? `📈 ${p.name} 资本红利进账 $${reward}` : `📉 ${p.name} 股市波动损失 $${Math.abs(reward)}`);
         }
     }
 
-    // 初始化渲染
+    // 初始化
     updateUI();
 </script>
 </body>
